@@ -8,8 +8,9 @@ list <- structure(NA,class="result")
      if(!missing(a)) eval.parent(substitute(a <- v,list(a=a,v=value[[i]])))
    }
    x
-} #taken from https://stat.ethz.ch/pipermail/r-help/2004-June/053343.html
+} #taken from https://stat.ethz.ch/pipermail/r-help/2004-June/053343.html allows you to return lists from functions
 
+#splits a sample into test and train sets, remember to set your seed!
 sample_split<-function(data,percentile=.2){
   sample_list<-sample(1:nrow(data),nrow(data)*percentile,replace=FALSE)
   train<-data[-sample_list,]
@@ -17,6 +18,7 @@ sample_split<-function(data,percentile=.2){
   return(list(train,test))
 }
 
+#fills in NA values according to the Paul Wyatt rules for doing so
 na_filler<-function(data,ints_as_factors=FALSE,character_fill=""){
   for(col in colnames(data)){
     if(class(data[,col])=="numeric"|(class(data[,col])=="integer"&ints_as_factors==FALSE)){
@@ -30,4 +32,16 @@ na_filler<-function(data,ints_as_factors=FALSE,character_fill=""){
   return(data)
 }
 
-
+#this function will take in a range of mutually-exclusive binary values and return a factor vector labeled with their column titles
+factorize<-function(indata,rowrange){
+  fact<-vector("numeric",nrow(indata))
+  levels<-NULL
+  j<-0
+  for(i in rowrange){
+    j<-j+1
+    fact[base_limited[,i]==1]<-j
+    levels<-c(levels,colnames(base_limited)[i])
+  }
+  fact<-factor(fact,1:j,levels)
+  return(fact)
+}
