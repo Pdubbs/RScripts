@@ -1,3 +1,4 @@
+#taken from https://stat.ethz.ch/pipermail/r-help/2004-June/053343.html allows you to return lists from functions
 list <- structure(NA,class="result")
 "[<-.result" <- function(x,...,value) {
    args <- as.list(match.call())
@@ -8,7 +9,7 @@ list <- structure(NA,class="result")
      if(!missing(a)) eval.parent(substitute(a <- v,list(a=a,v=value[[i]])))
    }
    x
-} #taken from https://stat.ethz.ch/pipermail/r-help/2004-June/053343.html allows you to return lists from functions
+} 
 
 #splits a sample into test and train sets, remember to set your seed!
 sample_split<-function(data,percentile=.2){
@@ -19,7 +20,7 @@ sample_split<-function(data,percentile=.2){
 }
 
 #fills in NA values according to the Paul Wyatt rules for doing so
-na_filler<-function(data,ints_as_factors=FALSE,character_fill=""){
+na.fill<-function(data,ints_as_factors=FALSE,character_fill=""){
   for(col in colnames(data)){
     if(class(data[,col])=="numeric"|(class(data[,col])=="integer"&ints_as_factors==FALSE)){
       data[is.na(data[,col]),col]<-mean(data[!is.na(data[,col]),col])
@@ -44,4 +45,9 @@ factorize<-function(indata,rowrange){
   }
   fact<-factor(fact,1:j,levels)
   return(fact)
+}
+
+#SQL coalesce, shamelessly stolen from http://www.cureffi.org/2013/05/02/r-equivalent-of-sql-coalesce/ Note values need to be ordered
+coalesce <- function(...) {
+apply(cbind(...), 1, function(x) x[which(!is.na(x))[1]])
 }
